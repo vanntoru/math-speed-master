@@ -44,6 +44,9 @@ def test_add2digit1digitdrill_queue():
     for n in range(1, 10):
         assert tens.count(n) >= 2
 
+    # two-digit numbers should never end with zero
+    assert all(a % 10 != 0 for a, _ in q)
+
     carry = sum(1 for a, b in q if a % 10 + b >= 10)
     assert carry == 10
 
@@ -78,3 +81,6 @@ def test_add2digit1digitdrill_seeded_properties():
     # Roughly half of the problems should require a carry
     carries = sum(1 for a, b in q if a % 10 + b >= 10)
     assert carries == 10
+
+    # Two-digit numbers should never end with zero
+    assert all(a % 10 != 0 for a, _ in q)

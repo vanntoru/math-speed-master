@@ -27,5 +27,6 @@ calculations at speed.
 ### Modes
 
 In addition to complement drills (modes A and B), **Mode C** serves two-digit plus
-one-digit addition problems. Roughly half of these are generated with a carry so
-students can practice bridging through the tens place.
+one-digit addition problems. Two-digit numbers never end with zero (10, 20, ... 90
+are excluded) and roughly half of the problems include a carry so students can
+practice bridging through the tens place.
