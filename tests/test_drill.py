@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from app.drill import BaseDrill, Add2Digit1DigitDrill
+from app.drill import BaseDrill, Add2Digit1DigitDrill, Add2Digit2DigitDrill
 
 
 def test_base_drill_regen_counts():
@@ -84,3 +84,23 @@ def test_add2digit1digitdrill_seeded_properties():
 
     # Two-digit numbers should never end with zero
     assert all(a % 10 != 0 for a, _ in q)
+
+
+def test_add2digit2digitdrill_queue_properties():
+    random.seed(0)
+    d = Add2Digit2DigitDrill()
+    q = d.q
+
+    assert len(q) == 20
+    assert len(set(q)) == 20
+
+    assert all(10 <= a <= 99 and 10 <= b <= 99 for a, b in q)
+    assert all(not (a % 10 == 0 and b % 10 == 0) for a, b in q)
+
+    carry = sum(1 for a, b in q if a % 10 + b % 10 >= 10)
+    assert carry == 10
+
+
+def test_add2digit2digitdrill_disp():
+    d = Add2Digit2DigitDrill()
+    assert d.disp((12, 34)) == "12+34"

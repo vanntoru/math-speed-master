@@ -86,3 +86,51 @@ class Add2Digit1DigitDrill(BaseDrill):
 
     def spk(self, v):
         pass
+
+
+class Add2Digit2DigitDrill(BaseDrill):
+    """Two-digit plus two-digit addition drill."""
+
+    def regen(self):
+        carry_q = []
+        non_carry_q = []
+        seen = set()
+
+        while len(carry_q) < 10:
+            a = random.randint(10, 99)
+            b = random.randint(10, 99)
+            if a % 10 == 0 and b % 10 == 0:
+                continue
+            pair = (a, b)
+            if pair in seen:
+                continue
+            if (a % 10) + (b % 10) >= 10:
+                carry_q.append(pair)
+                seen.add(pair)
+
+        while len(non_carry_q) < 10:
+            a = random.randint(10, 99)
+            b = random.randint(10, 99)
+            if a % 10 == 0 and b % 10 == 0:
+                continue
+            pair = (a, b)
+            if pair in seen:
+                continue
+            if (a % 10) + (b % 10) < 10:
+                non_carry_q.append(pair)
+                seen.add(pair)
+
+        q = carry_q + non_carry_q
+        random.shuffle(q)
+        for i in range(len(q) - 1):
+            if q[i] == q[i + 1]:
+                swap = (i + 2) % len(q)
+                q[i + 1], q[swap] = q[swap], q[i + 1]
+        self.q = q
+
+    def disp(self, v):
+        a, b = v
+        return f"{a}+{b}"
+
+    def spk(self, v):
+        pass
