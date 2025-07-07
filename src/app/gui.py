@@ -11,6 +11,8 @@ from tkinter import ttk
 import time
 import sys
 import os
+import csv
+import datetime
 
 if __package__ is None:
     sys.path.append(
@@ -40,6 +42,24 @@ _FONT_MSG = ("Yu Gothic", 60, "bold")  # 開始・終了メッセージ
 _FONT_DLG = ("Consolas", 48)  # 遅延リスト
 _CARD_BG, _CARD_FG = "#222222", "#FFFFFF"
 _NUM_Q, _THRESH, _KPI = 20, 0.80, 0.80
+SESSION_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "session_log.csv")
+
+
+def log_session(csv_path, mode, avg, records):
+    """Append a session summary row to the CSV log."""
+    file_exists = os.path.exists(csv_path)
+    slow_count = sum(1 for _d, rt in records if rt > _THRESH)
+    with open(csv_path, "a", newline="") as f:
+        writer = csv.writer(f)
+        if not file_exists:
+            writer.writerow(["date", "time", "mode", "avg_rt", "slow_count"])
+        writer.writerow([
+            datetime.date.today(),
+            datetime.datetime.now().strftime("%H:%M:%S"),
+            mode,
+            f"{avg:.2f}",
+            slow_count,
+        ])
 
 # ──────────────────────────────
 # GUI アプリ
@@ -177,6 +197,7 @@ class App(tk.Tk):
 
     def finish(self):
         avg = sum(rt for _, rt in self.records) / len(self.records)
+        log_session(SESSION_LOG, self.mode.get(), avg, self.records)
         self.session = False
         self.lbl.config(text=f"{_NUM_Q}問終了！\n平均 {avg:.2f} s", font=_FONT_MSG)
         self.stat.set(f"平均 RT: {avg:.2f} s")
