@@ -336,6 +336,12 @@ class HistoryWindow(tk.Toplevel):
             self.tree.column(c, width=80, anchor=tk.CENTER)
         self.tree.pack(fill=tk.BOTH, expand=True)
 
+        tk.Button(
+            self,
+            text="選択セッションを削除",
+            command=self.delete_selected,
+        ).pack(pady=5)
+
         self.update_view()
 
     def load_data(self):
@@ -377,6 +383,25 @@ class HistoryWindow(tk.Toplevel):
                     row["slow_count"],
                 ),
             )
+
+    def delete_selected(self):
+        sel = self.tree.selection()
+        if not sel:
+            return
+        values = self.tree.item(sel[0], "values")
+        if not tk.messagebox.askyesno(
+            "削除確認", f"{values[0]} {values[1]} のセッションを削除しますか?"
+        ):
+            return
+
+        mask = (
+            (self.df["date"].dt.strftime("%Y-%m-%d") == values[0])
+            & (self.df["time"] == values[1])
+            & (self.df["mode"] == values[2])
+        )
+        self.df = self.df[~mask]
+        self.df.to_csv(REFLEX_LOG, index=False)
+        self.update_view()
 
 
 if __name__ == "__main__":

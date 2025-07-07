@@ -29,3 +29,11 @@ In addition to complement drills (modes A and B), **Mode C** serves two-digit pl
 one-digit addition problems. Two-digit numbers never end with zero (10, 20, ... 90
 are excluded) and roughly half of the problems include a carry so students can
 practice bridging through the tens place.
+
+### Session History
+
+Each training run is appended to `reflex_log.csv` in the project directory.
+The history window lets you review past results and graph reaction times.
+Entries can also be removed via the **選択セッションを削除** button.
+Deleting a session rewrites the CSV immediately and cannot be undone, so
+back up the file manually if you want to keep old records.
