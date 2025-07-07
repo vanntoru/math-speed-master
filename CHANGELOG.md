@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.5.0] - 2025-07-10
+- Added HistoryWindow with matplotlib graph and session list.
+- Added pandas and matplotlib as dependencies.
+- CSV log renamed to `reflex_log.csv`.
+
 ## [v0.4.0] - 2025-07-09
 - Mode C two-digit terms exclude multiples of ten.
 
