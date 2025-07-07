@@ -52,6 +52,17 @@ class Add2Digit1DigitDrill(BaseDrill):
         random.shuffle(tens)
 
         carry_indices = set(random.sample(range(20), 10))
+
+        # ensure any addend 9 problems become carry problems so that
+        # the two-digit number never ends with 0
+        for i, a in enumerate(addends):
+            if a == 9 and i not in carry_indices:
+                for j in list(carry_indices):
+                    if addends[j] != 9:
+                        carry_indices.remove(j)
+                        carry_indices.add(i)
+                        break
+
         q = []
         for i in range(20):
             a = addends[i]
@@ -59,7 +70,7 @@ class Add2Digit1DigitDrill(BaseDrill):
             if i in carry_indices:
                 ones = random.randint(10 - a, 9)
             else:
-                ones = random.randint(0, 9 - a)
+                ones = random.randint(1, 9 - a)
             q.append((t * 10 + ones, a))
 
         random.shuffle(q)

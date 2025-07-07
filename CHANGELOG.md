@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.4.0] - 2025-07-09
+- Mode C two-digit terms exclude multiples of ten.
+
 ## [v0.3.0] - 2025-07-08
 - Documented mode C and its generation rules.
 - Added short description of mode C in the README.
