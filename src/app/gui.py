@@ -8,7 +8,8 @@
 
 import tkinter as tk
 from tkinter import ttk
-import random, time
+import time
+from .drill import ComplementDrill, TenMinusDrill
 
 # ──────────────────────────────
 # 設定値
@@ -18,35 +19,6 @@ _FONT_MSG  = ("Yu Gothic", 60, "bold")   # 開始・終了メッセージ
 _FONT_DLG  = ("Consolas", 48)             # 遅延リスト
 _CARD_BG, _CARD_FG = "#222222", "#FFFFFF"
 _NUM_Q, _THRESH, _KPI = 20, 0.80, 0.80
-_VALUES = list(range(1, 10))
-
-# ──────────────────────────────
-# Drill
-# ──────────────────────────────
-
-class BaseDrill:
-    def __init__(self): self.regen()
-    def regen(self):
-        q = _VALUES * 2 + random.sample(_VALUES, 2)
-        random.shuffle(q)
-        for i in range(len(q) - 1):
-            if q[i] == q[i + 1]: swap = (i + 2) % len(q); q[i + 1], q[swap] = q[swap], q[i + 1]
-        self.q = q
-    def next(self):
-        if not self.q: self.regen()
-        return self.q.pop()
-    def disp(self, v): ...
-    def spk(self, v): ...
-
-class ComplementDrill(BaseDrill):
-    def disp(self, v): return str(v)
-    def spk(self, v):
-        pass
-
-class TenMinusDrill(BaseDrill):
-    def disp(self, v): return f"10−{v}"
-    def spk(self, v):
-        pass
 
 # ──────────────────────────────
 # GUI アプリ
