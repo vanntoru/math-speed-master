@@ -7,10 +7,9 @@ visible progress.
 ## Installation
 
 1. Ensure **Python 3.10** or newer is installed.
-2. No third‑party packages are required, but an empty `requirements.txt` is
-   provided for convenience:
+2. Install the required packages (`pandas` and `matplotlib`):
    ```bash
-   pip install -r requirements.txt  # optional, installs nothing
+   pip install -r requirements.txt
    ```
 
 ## Quick Start

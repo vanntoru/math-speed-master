@@ -3,6 +3,7 @@ import csv
 import datetime
 
 import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 import app.gui as gui
@@ -50,7 +51,7 @@ def read_csv_rows(path):
 
 def test_finish_creates_csv_with_header(tmp_path, monkeypatch):
     csv_path = tmp_path / "log.csv"
-    monkeypatch.setattr(gui, "SESSION_LOG", str(csv_path))
+    monkeypatch.setattr(gui, "REFLEX_LOG", str(csv_path))
 
     app = create_dummy_app("A", [("1", 1.0), ("2", 0.5)])
     app.finish()
@@ -69,7 +70,7 @@ def test_finish_appends_without_header(tmp_path, monkeypatch):
     with open(csv_path, "w", newline="") as f:
         csv.writer(f).writerow(["date", "time", "mode", "avg_rt", "slow_count"])
 
-    monkeypatch.setattr(gui, "SESSION_LOG", str(csv_path))
+    monkeypatch.setattr(gui, "REFLEX_LOG", str(csv_path))
 
     app = create_dummy_app("B", [("1", 0.1), ("2", 0.2)])
     app.finish()
@@ -79,4 +80,3 @@ def test_finish_appends_without_header(tmp_path, monkeypatch):
     assert len(rows) == 2
     assert rows[1][2] == "B"
     assert rows[1][3] == "0.15"
-

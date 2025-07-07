@@ -13,14 +13,13 @@ import sys
 import os
 import csv
 import datetime
+import pandas as pd
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 if __package__ is None:
     sys.path.append(
-        os.path.dirname(
-            os.path.dirname(
-                os.path.dirname(os.path.abspath(__file__))
-            )
-        )
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     )
     from drill import (
         ComplementDrill,
@@ -42,7 +41,7 @@ _FONT_MSG = ("Yu Gothic", 60, "bold")  # 開始・終了メッセージ
 _FONT_DLG = ("Consolas", 48)  # 遅延リスト
 _CARD_BG, _CARD_FG = "#222222", "#FFFFFF"
 _NUM_Q, _THRESH, _KPI = 20, 0.80, 0.80
-SESSION_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "session_log.csv")
+REFLEX_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reflex_log.csv")
 
 
 def log_session(csv_path, mode, avg, records):
@@ -53,13 +52,16 @@ def log_session(csv_path, mode, avg, records):
         writer = csv.writer(f)
         if not file_exists:
             writer.writerow(["date", "time", "mode", "avg_rt", "slow_count"])
-        writer.writerow([
-            datetime.date.today(),
-            datetime.datetime.now().strftime("%H:%M:%S"),
-            mode,
-            f"{avg:.2f}",
-            slow_count,
-        ])
+        writer.writerow(
+            [
+                datetime.date.today(),
+                datetime.datetime.now().strftime("%H:%M:%S"),
+                mode,
+                f"{avg:.2f}",
+                slow_count,
+            ]
+        )
+
 
 # ──────────────────────────────
 # GUI アプリ
@@ -151,6 +153,12 @@ class App(tk.Tk):
             state=tk.DISABLED,
         )
         self.reset_btn.pack(pady=8)
+        tk.Button(
+            side,
+            text="履歴グラフ",
+            width=18,
+            command=self.show_history,
+        ).pack(pady=(0, 8))
         tk.Label(side, text="Enter▶回答＆開始  Esc▶Reset", font=("Yu Gothic", 8)).pack()
 
     # bindings
@@ -197,7 +205,7 @@ class App(tk.Tk):
 
     def finish(self):
         avg = sum(rt for _, rt in self.records) / len(self.records)
-        log_session(SESSION_LOG, self.mode.get(), avg, self.records)
+        log_session(REFLEX_LOG, self.mode.get(), avg, self.records)
         self.session = False
         self.lbl.config(text=f"{_NUM_Q}問終了！\n平均 {avg:.2f} s", font=_FONT_MSG)
         self.stat.set(f"平均 RT: {avg:.2f} s")
@@ -234,6 +242,9 @@ class App(tk.Tk):
         win.transient(self)
         win.grab_set()
         self.wait_window(win)
+
+    def show_history(self):
+        HistoryWindow(self)
 
     def reset(self):
         self.session = False
@@ -277,6 +288,83 @@ class App(tk.Tk):
         avg = sum(rt for _, rt in self.records) / len(self.records)
         self.stat.set(f"平均 RT: {avg:.2f} s")
         self.stat_lbl.config(bg="#66CC66" if avg <= _KPI else "#CCCCCC")
+
+
+class HistoryWindow(tk.Toplevel):
+    def __init__(self, master):
+        super().__init__(master)
+        self.title("履歴グラフ")
+        self.df = self.load_data()
+
+        self.filter_var = tk.StringVar(value="all")
+        opt_frame = tk.Frame(self)
+        opt_frame.pack(pady=5)
+        for text, val in [
+            ("全モード表示", "all"),
+            ("モードAのみ", "A"),
+            ("モードBのみ", "B"),
+            ("モードCのみ", "C"),
+        ]:
+            tk.Radiobutton(
+                opt_frame,
+                text=text,
+                variable=self.filter_var,
+                value=val,
+                command=self.update_view,
+            ).pack(side=tk.LEFT)
+
+        self.fig, self.ax = plt.subplots(figsize=(5, 3), dpi=100)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+        self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+        cols = ("date", "time", "mode", "avg_rt", "slow_count")
+        self.tree = ttk.Treeview(self, columns=cols, show="headings", height=8)
+        for c in cols:
+            self.tree.heading(c, text=c)
+            self.tree.column(c, width=80, anchor=tk.CENTER)
+        self.tree.pack(fill=tk.BOTH, expand=True)
+
+        self.update_view()
+
+    def load_data(self):
+        if os.path.exists(REFLEX_LOG):
+            df = pd.read_csv(REFLEX_LOG)
+        else:
+            df = pd.DataFrame(columns=["date", "time", "mode", "avg_rt", "slow_count"])
+        if not df.empty:
+            df["date"] = pd.to_datetime(df["date"])
+            df["avg_rt"] = pd.to_numeric(df["avg_rt"], errors="coerce")
+        return df
+
+    def update_view(self):
+        if self.filter_var.get() == "all":
+            df = self.df
+        else:
+            df = self.df[self.df["mode"] == self.filter_var.get()]
+
+        self.ax.clear()
+        if not df.empty:
+            self.ax.plot(df["date"], df["avg_rt"], marker="o")
+        self.ax.axhline(0.8, color="red", linestyle="--")
+        self.ax.set_xlabel("date")
+        self.ax.set_ylabel("avg_rt")
+        self.fig.autofmt_xdate()
+        self.canvas.draw()
+
+        for i in self.tree.get_children():
+            self.tree.delete(i)
+        for _, row in df.iterrows():
+            self.tree.insert(
+                "",
+                "end",
+                values=(
+                    row["date"].strftime("%Y-%m-%d"),
+                    row["time"],
+                    row["mode"],
+                    row["avg_rt"],
+                    row["slow_count"],
+                ),
+            )
 
 
 if __name__ == "__main__":
