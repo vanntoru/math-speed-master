@@ -31,12 +31,14 @@ if __package__ is None:
         ComplementDrill,
         TenMinusDrill,
         Add2Digit1DigitDrill,
+        Add2Digit2DigitDrill,
     )
 else:
     from .drill import (
         ComplementDrill,
         TenMinusDrill,
         Add2Digit1DigitDrill,
+        Add2Digit2DigitDrill,
     )
 
 # ──────────────────────────────
@@ -46,14 +48,16 @@ _FONT_PROB = ("Yu Gothic", 110, "bold")  # 問題表示
 _FONT_MSG = ("Yu Gothic", 60, "bold")  # 開始・終了メッセージ
 _FONT_DLG = ("Consolas", 48)  # 遅延リスト
 _CARD_BG, _CARD_FG = "#222222", "#FFFFFF"
-_NUM_Q, _THRESH, _KPI = 20, 0.80, 0.80
+_NUM_Q = 20
+_THRESH = {"A": 0.8, "B": 0.8, "C": 0.8, "D": 1.5}
+_KPI = {"A": 0.8, "B": 0.8, "C": 0.8, "D": 1.5}
 REFLEX_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reflex_log.csv")
 
 
 def log_session(csv_path, mode, avg, records):
     """Append a session summary row to the CSV log."""
     file_exists = os.path.exists(csv_path)
-    slow_count = sum(1 for _d, rt in records if rt > _THRESH)
+    slow_count = sum(1 for _d, rt in records if rt > _THRESH.get(mode, 0.8))
     with open(csv_path, "a", newline="") as f:
         writer = csv.writer(f)
         if not file_exists:
@@ -133,6 +137,13 @@ class App(tk.Tk):
             value="C",
             command=self.set_mode,
         ).pack(anchor=tk.W)
+        tk.Radiobutton(
+            lf,
+            text="D: 2桁＋2桁",
+            variable=self.mode,
+            value="D",
+            command=self.set_mode,
+        ).pack(anchor=tk.W)
 
         tk.Label(side, text="履歴", font=("Yu Gothic", 12, "bold")).pack()
         self.tree = ttk.Treeview(side, columns=("#", "RT"), show="headings", height=9)
@@ -180,16 +191,20 @@ class App(tk.Tk):
                 self.mode.set("A")
             elif isinstance(self.drill, TenMinusDrill):
                 self.mode.set("B")
-            else:
+            elif isinstance(self.drill, Add2Digit1DigitDrill):
                 self.mode.set("C")
+            else:
+                self.mode.set("D")
             return
 
         if self.mode.get() == "A":
             self.drill = ComplementDrill()
         elif self.mode.get() == "B":
             self.drill = TenMinusDrill()
-        else:
+        elif self.mode.get() == "C":
             self.drill = Add2Digit1DigitDrill()
+        else:
+            self.drill = Add2Digit2DigitDrill()
 
         self.lbl.config(text="Enter\nで開始", font=_FONT_MSG)
 
@@ -215,14 +230,19 @@ class App(tk.Tk):
         self.session = False
         self.lbl.config(text=f"{_NUM_Q}問終了！\n平均 {avg:.2f} s", font=_FONT_MSG)
         self.stat.set(f"平均 RT: {avg:.2f} s")
-        self.stat_lbl.config(bg="#66CC66" if avg <= _KPI else "#CCCCCC")
-        slow = [(d, rt) for d, rt in self.records if rt > _THRESH]
+        self.stat_lbl.config(
+            bg="#66CC66" if avg <= _KPI[self.mode.get()] else "#CCCCCC"
+        )
+        slow = [
+            (d, rt) for d, rt in self.records if rt > _THRESH[self.mode.get()]
+        ]
         self.show_slow_dialog(slow)
 
     # custom dialog
     def show_slow_dialog(self, slow):
         win = tk.Toplevel(self)
-        win.title("0.8 秒より遅かった問題")
+        thr = _THRESH[self.mode.get()]
+        win.title(f"{thr} 秒より遅かった問題")
         win.configure(bg=_CARD_BG)
 
         if slow:
@@ -238,7 +258,7 @@ class App(tk.Tk):
         else:
             tk.Label(
                 win,
-                text="すべて 0.8 秒以内でした！",
+                text=f"すべて {thr} 秒以内でした！",
                 font=_FONT_DLG,
                 fg=_CARD_FG,
                 bg=_CARD_BG,
@@ -299,7 +319,9 @@ class App(tk.Tk):
 
         avg = sum(rt for _, rt in self.records) / len(self.records)
         self.stat.set(f"平均 RT: {avg:.2f} s")
-        self.stat_lbl.config(bg="#66CC66" if avg <= _KPI else "#CCCCCC")
+        self.stat_lbl.config(
+            bg="#66CC66" if avg <= _KPI[self.mode.get()] else "#CCCCCC"
+        )
 
 
 class HistoryWindow(tk.Toplevel):
@@ -316,6 +338,7 @@ class HistoryWindow(tk.Toplevel):
             ("モードAのみ", "A"),
             ("モードBのみ", "B"),
             ("モードCのみ", "C"),
+            ("モードDのみ", "D"),
         ]:
             tk.Radiobutton(
                 opt_frame,
@@ -363,7 +386,8 @@ class HistoryWindow(tk.Toplevel):
         self.ax.clear()
         if not df.empty:
             self.ax.plot(df["date"], df["avg_rt"], marker="o")
-        self.ax.axhline(0.8, color="red", linestyle="--")
+        kpi = _KPI.get(self.filter_var.get(), _KPI["A"])
+        self.ax.axhline(kpi, color="red", linestyle="--")
         self.ax.set_xlabel("date")
         self.ax.set_ylabel("avg_rt")
         self.fig.autofmt_xdate()
