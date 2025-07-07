@@ -31,10 +31,15 @@ one-digit addition problems. Two-digit numbers never end with zero (10, 20, ... 
 are excluded) and roughly half of the problems include a carry so students can
 practice bridging through the tens place.
 
-### Session History
+### Session History & CSV Logging
 
-Each training run is appended to `reflex_log.csv` in the project directory.
-The history window lets you review past results and graph reaction times.
-Entries can also be removed via the **選択セッションを削除** button.
-Deleting a session rewrites the CSV immediately and cannot be undone, so
-back up the file manually if you want to keep old records.
+After every session a summary line is written to `src/app/reflex_log.csv`
+containing the date, time, selected mode, average reaction time and the
+number of problems that exceeded the 0.8 s threshold.  Press the
+**履歴グラフ** button to open a separate window that plots these values and
+shows the underlying table.  Results can be filtered per mode and the
+**選択セッションを削除** button permanently removes any highlighted rows from
+the CSV.  Deletion cannot be undone, so archive the file manually or rename
+it before launching the program if you wish to start with a fresh log.  The
+save location can be customised by editing the `REFLEX_LOG` constant inside
+`src/app/gui.py`.
