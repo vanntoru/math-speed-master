@@ -7,9 +7,10 @@ visible progress.
 ## Installation
 
 1. Ensure **Python 3.10** or newer is installed.
-2. Install the required packages:
+2. No third‑party packages are required, but an empty `requirements.txt` is
+   provided for convenience:
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirements.txt  # optional, installs nothing
    ```
 
 ## Quick Start
