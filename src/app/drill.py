@@ -2,6 +2,7 @@ import random
 
 _VALUES = list(range(1, 10))
 
+
 class BaseDrill:
     def __init__(self):
         self.regen()
@@ -20,11 +21,10 @@ class BaseDrill:
             self.regen()
         return self.q.pop()
 
-    def disp(self, v):
-        ...
+    def disp(self, v): ...
 
-    def spk(self, v):
-        ...
+    def spk(self, v): ...
+
 
 class ComplementDrill(BaseDrill):
     def disp(self, v):
@@ -32,6 +32,7 @@ class ComplementDrill(BaseDrill):
 
     def spk(self, v):
         pass
+
 
 class TenMinusDrill(BaseDrill):
     def disp(self, v):
