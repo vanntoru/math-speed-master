@@ -1,12 +1,13 @@
 # 10 の補数 Reflex Trainer 仕様書
 
-*Version 2.6 — 最終統合版*
+*Version 2.8 — CSVログ&履歴グラフ*
 
 ---
 
 ## 0. 概要
 
 小学校 2 年生向けに「10 の補数」と「10−□」の瞬時暗算を鍛えるローカル GUI アプリ。1 セッション 20 問で平均リアクションタイム (RT) と遅延問題を可視化し、ハイブリッド戦略 (ブリッジング 10 & 補数加算法) の基礎を構築する。
+v2.8 では結果を CSV へ自動保存し、履歴グラフで進捗を確認できるようになった。
 
 | 項目       | 内容                                                                            |
 | -------- | ----------------------------------------------------------------------------- |
@@ -61,6 +62,12 @@
 * 110 pt 表示で 4 m 教室掲示でも識字可。
 * 指１本操作 (Enter) に統一し、視線移動を最小化。
 
+### 1.6 履歴ログ & グラフ
+
+* セッション終了ごとに `src/app/reflex_log.csv` へ日時・モード・平均 RT・遅延数を自動追記。
+* サイドバーの **履歴グラフ** ボタンで履歴ウィンドウを開き、平均 RT の推移を matplotlib で表示。
+* モード別フィルタと **選択セッションを削除** 機能で不要な行を CSV から削除可能。
+
 ---
 
 ## 2. 開発／ビルド手順
@@ -69,11 +76,11 @@
 # 1. 依存インストール
 py -m pip install --upgrade pip
 # 2. 開発用ホットラン
-python phase0_reflex_trainer.py  # v2.6 コード
+python -m src.app.gui  # v2.8 コード
 
 # 3. EXE 化 (配布用)
-py -m PyInstaller --onefile --noconsole phase0_reflex_trainer.py
-# dist/phase0_reflex_trainer.exe が生成
+py -m PyInstaller --onefile --noconsole src/app/gui.py
+# dist/gui.exe が生成
 ```
 
 *アイコン追加:* `--icon app.ico`
@@ -88,6 +95,7 @@ py -m PyInstaller --onefile --noconsole phase0_reflex_trainer.py
 | KPI 閾値 | `_KPI = 0.80`                        | 平均タイム基準変更     |
 | フォント   | `_FONT_PROB / _FONT_MSG / _FONT_DLG` | 他言語環境に合わせ変更   |
 | 出題数    | `_NUM_Q = 20`                        | 10～100 で自由設定  |
+| CSV ファイル | `REFLEX_LOG`                        | ログ保存先を変更      |
 
 ---
 
@@ -95,7 +103,6 @@ py -m PyInstaller --onefile --noconsole phase0_reflex_trainer.py
 
 * **ブリッジング 10 高速化**: 2 桁−1 桁 くり下がり対応ドリルを `Bridge10Drill` として追加可能。
 * **適応スイッチ訓練**: 問題毎に最適戦略を自己申告させる UI (キー S/B 等)。
-* **CSV ログ保存**: `records` を日付別に書き出し、進捗グラフ化。
 
 ---
 
@@ -119,6 +126,7 @@ py -m PyInstaller --onefile --noconsole phase0_reflex_trainer.py
 | 2.5 | 07‑07 | メッセージはみ出し解消 (カード幅 640)                  |
 | 2.6 | 07‑07 | **特大フォントダイアログ (48 pt)** で遅延問題表示         |
 | 2.7 | 07‑07 | **モード C** (2桁＋1桁) 追加                       |
+| 2.8 | 07‑07 | CSV ログ自動保存、履歴グラフウィンドウ               |
 
 ---
 
