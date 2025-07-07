@@ -1,1 +1,11 @@
-venv/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# PyInstaller dist
+dist/
+build/
+
+# OS / editor junk
+.DS_Store
+.vscode/
