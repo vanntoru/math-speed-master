@@ -86,6 +86,13 @@ class App(tk.Tk):
             value="B",
             command=self.set_mode,
         ).pack(anchor=tk.W)
+        tk.Radiobutton(
+            lf,
+            text="C: 2桁＋1桁",
+            variable=self.mode,
+            value="C",
+            command=self.set_mode,
+        ).pack(anchor=tk.W)
 
         tk.Label(side, text="履歴", font=("Yu Gothic", 12, "bold")).pack()
         self.tree = ttk.Treeview(side, columns=("#", "RT"), show="headings", height=9)
@@ -123,13 +130,20 @@ class App(tk.Tk):
     def set_mode(self):
         if self.session:
             tk.messagebox.showinfo("モード変更", "終了後に変更してください")
-            self.mode.set("A" if isinstance(self.drill, ComplementDrill) else "B")
+            if isinstance(self.drill, ComplementDrill):
+                self.mode.set("A")
+            elif isinstance(self.drill, TenMinusDrill):
+                self.mode.set("B")
+            else:
+                self.mode.set("C")
             return
 
         if self.mode.get() == "A":
             self.drill = ComplementDrill()
-        else:
+        elif self.mode.get() == "B":
             self.drill = TenMinusDrill()
+        else:
+            self.drill = Add2Digit1DigitDrill()
 
         self.lbl.config(text="Enter\nで開始", font=_FONT_MSG)
 
