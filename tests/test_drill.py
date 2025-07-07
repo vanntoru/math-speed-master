@@ -54,3 +54,27 @@ def test_add2digit1digitdrill_queue():
 def test_add2digit1digitdrill_disp():
     d = Add2Digit1DigitDrill()
     assert d.disp((52, 7)) == "52+7"
+
+
+def test_add2digit1digitdrill_seeded_properties():
+    """Queue construction should be reproducible and balanced."""
+    random.seed(123)
+    d = Add2Digit1DigitDrill()
+    q = d.q
+
+    # The drill should always create exactly 20 problems
+    assert len(q) == 20
+
+    # Each one-digit addend should appear at least twice
+    addends = [b for _, b in q]
+    for n in range(1, 10):
+        assert addends.count(n) >= 2
+
+    # Tens digits for the two-digit number should also be evenly distributed
+    tens = [a // 10 for a, _ in q]
+    for n in range(1, 10):
+        assert tens.count(n) >= 2
+
+    # Roughly half of the problems should require a carry
+    carries = sum(1 for a, b in q if a % 10 + b >= 10)
+    assert carries == 10
