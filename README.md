@@ -11,6 +11,7 @@ visible progress.
    ```bash
    pip install -r requirements.txt
    ```
+   These libraries provide the CSV log handling and reaction time graphs.
 
 ## Quick Start
 
