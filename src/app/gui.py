@@ -16,9 +16,9 @@ if __package__ is None:
     sys.path.append(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     )
-    from drill import ComplementDrill, TenMinusDrill
+    from drill import ComplementDrill, TenMinusDrill, Add2Digit1DigitDrill
 else:
-    from .drill import ComplementDrill, TenMinusDrill
+    from .drill import ComplementDrill, TenMinusDrill, Add2Digit1DigitDrill
 
 # ──────────────────────────────
 # 設定値
