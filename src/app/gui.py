@@ -9,7 +9,16 @@
 import tkinter as tk
 from tkinter import ttk
 import time
-from .drill import ComplementDrill, TenMinusDrill
+import sys
+import os
+
+if __package__ is None:
+    sys.path.append(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    )
+    from drill import ComplementDrill, TenMinusDrill
+else:
+    from .drill import ComplementDrill, TenMinusDrill
 
 # ──────────────────────────────
 # 設定値
