@@ -31,6 +31,11 @@ one-digit addition problems. Two-digit numbers never end with zero (10, 20, ... 
 are excluded) and roughly half of the problems include a carry so students can
 practice bridging through the tens place.
 
+**Mode D** extends this to two-digit plus two-digit addition. Numbers are
+drawn from 10–99 and pairs where both numbers end in zero are skipped. The 20
+problems always contain an even split of carry and non-carry cases, providing
+practice with and without regrouping.
+
 ### Session History & CSV Logging
 
 After every session a summary line is written to `src/app/reflex_log.csv`
