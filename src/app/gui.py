@@ -13,9 +13,15 @@ import sys
 import os
 import csv
 import datetime
-import pandas as pd
-from matplotlib import pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+try:
+    import pandas as pd
+    from matplotlib import pyplot as plt
+    from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+except Exception:  # pragma: no cover - optional deps may be missing
+    pd = None
+    plt = None
+    FigureCanvasTkAgg = None
 
 if __package__ is None:
     sys.path.append(
@@ -244,6 +250,12 @@ class App(tk.Tk):
         self.wait_window(win)
 
     def show_history(self):
+        if pd is None or plt is None:
+            tk.messagebox.showerror(
+                "Missing Dependency",
+                "pandas と matplotlib をインストールしてください",
+            )
+            return
         HistoryWindow(self)
 
     def reset(self):
