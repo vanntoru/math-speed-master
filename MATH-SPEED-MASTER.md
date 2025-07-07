@@ -13,11 +13,8 @@
 | 対応 OS    | Windows 10 / 11 (64 bit)                                                      |
 | 言語 / GUI | **Python 3.10+** & **Tkinter**                                                |
 | 実行形式     | `python` 直実行 or **PyInstaller exe** (―onefile ―noconsole)                     |
-| 依存ライブラリ  | `pyttsx3 >= 2.9` (TTS)                                                        |
-| 画面構成     | 左 = カード (600×540, #222)<br>右 = 履歴 & KPI & 操作                                  |
+| 画面構成     | 左 = カード (600×540, #222)<br>右 = 履歴 & KPI & 操作                           |
 | フォント     | 問題: **Yu Gothic 110 pt**<br>メッセージ: Yu Gothic 60 pt<br>遅延ダイアログ: Consolas 48 pt |
-| 音声       | Windows SAPI 日本語 (Haruka/Ayumi) / `rate=220`                                  |
-| 操作キー     | **Enter** = スタート & 回答確定<br>**Esc / Reset ボタン** = リセット                         |
 
 ---
 
@@ -25,10 +22,10 @@
 
 ### 1.1 出題モード
 
-| モード            | 表示例    | 期待反応  | 読み上げ           |
-| -------------- | ------ | ----- | -------------- |
-| **A** 補数カード    | `3`    | 7 を即答 | 「3 の 10 の補数は?」 |
-| **B** 10−□ カード | `10−3` | 7 を即答 | 「10 ひく 3 は?」   |
+| モード            | 表示例    | 期待反応  |
+| -------------- | ------ | ----- |
+| **A** 補数カード    | `3`    | 7 を即答 |
+| **B** 10−□ カード | `10−3` | 7 を即答 |
 
 *サイドパネルのラジオボタンで随時切替。セッション中は変更禁止。*
 
@@ -62,11 +59,6 @@
 * 110 pt 表示で 4 m 教室掲示でも識字可。
 * 指１本操作 (Enter) に統一し、視線移動を最小化。
 
-### 1.6 TTS
-
-* `pyttsx3` を非同期スレッドで実行し GUI 非ブロッキング。
-* Rate = 220。ユーザー設定で変動可 (`_TTS_RATE`).
-
 ---
 
 ## 2. 開発／ビルド手順
@@ -74,8 +66,6 @@
 ```bash
 # 1. 依存インストール
 py -m pip install --upgrade pip
-py -m pip install pyttsx3
-
 # 2. 開発用ホットラン
 python phase0_reflex_trainer.py  # v2.6 コード
 
@@ -95,7 +85,6 @@ py -m PyInstaller --onefile --noconsole phase0_reflex_trainer.py
 | 遅延判定閾値 | `_THRESH = 0.80`                     | 0.6 s などに変更可能 |
 | KPI 閾値 | `_KPI = 0.80`                        | 平均タイム基準変更     |
 | フォント   | `_FONT_PROB / _FONT_MSG / _FONT_DLG` | 他言語環境に合わせ変更   |
-| TTS 速度 | `_TTS_RATE`                          | 150–250 推奨    |
 | 出題数    | `_NUM_Q = 20`                        | 10～100 で自由設定  |
 
 ---
@@ -111,7 +100,6 @@ py -m PyInstaller --onefile --noconsole phase0_reflex_trainer.py
 ## 5. ライセンス & 配布
 
 * ソースコード: MIT License (予定)。
-* 音声合成: Windows SAPI 日本語音声利用許諾に準拠。
 
 ---
 

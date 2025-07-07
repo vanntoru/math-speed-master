@@ -8,35 +8,17 @@
 
 import tkinter as tk
 from tkinter import ttk
-import random, time, threading, pyttsx3
+import random, time
 
 # ──────────────────────────────
 # 設定値
 # ──────────────────────────────
-_TTS_RATE = 220
 _FONT_PROB = ("Yu Gothic", 110, "bold")  # 問題表示
 _FONT_MSG  = ("Yu Gothic", 60, "bold")   # 開始・終了メッセージ
 _FONT_DLG  = ("Consolas", 48)             # 遅延リスト
 _CARD_BG, _CARD_FG = "#222222", "#FFFFFF"
 _NUM_Q, _THRESH, _KPI = 20, 0.80, 0.80
 _VALUES = list(range(1, 10))
-
-# ──────────────────────────────
-# TTS
-# ──────────────────────────────
-
-def _init_tts():
-    e = pyttsx3.init()
-    for v in e.getProperty("voices"):
-        if any(n in v.name for n in ("Japanese", "Haruka", "Ayumi")):
-            e.setProperty("voice", v.id); break
-    e.setProperty("rate", _TTS_RATE)
-    return e
-
-_tts = _init_tts()
-
-def speak_async(t):
-    threading.Thread(target=lambda: (_tts.say(t), _tts.runAndWait()), daemon=True).start()
 
 # ──────────────────────────────
 # Drill
@@ -58,11 +40,13 @@ class BaseDrill:
 
 class ComplementDrill(BaseDrill):
     def disp(self, v): return str(v)
-    def spk(self, v): speak_async(f"{v} の 10 の補数は？")
+    def spk(self, v):
+        pass
 
 class TenMinusDrill(BaseDrill):
     def disp(self, v): return f"10−{v}"
-    def spk(self, v): speak_async(f"10 ひく {v} は？")
+    def spk(self, v):
+        pass
 
 # ──────────────────────────────
 # GUI アプリ
@@ -109,7 +93,7 @@ class App(tk.Tk):
     def start(self):
         self.session, self.records = True, []; self.clear_tree(); self.update_stat(); self.reset_btn.config(state=tk.NORMAL); self.drill.regen(); self.next()
     def next(self):
-        v = self.drill.next(); self.current_disp = self.drill.disp(v); self.lbl.config(text=self.current_disp, font=_FONT_PROB); self.drill.spk(v); self.t0 = time.perf_counter()
+        v = self.drill.next(); self.current_disp = self.drill.disp(v); self.lbl.config(text=self.current_disp, font=_FONT_PROB); self.t0 = time.perf_counter()
     def finish(self):
         avg = sum(rt for _, rt in self.records) / len(self.records)
         self.session = False; self.lbl.config(text=f"{_NUM_Q}問終了！\n平均 {avg:.2f} s", font=_FONT_MSG)

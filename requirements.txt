@@ -1,3 +1,2 @@
-pyttsx3>=2.9
 pandas
 matplotlib
