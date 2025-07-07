@@ -23,3 +23,9 @@ python -m src.app.gui
 
 This opens the training window and starts a session where you can practice ten-complement
 calculations at speed.
+
+### Modes
+
+In addition to complement drills (modes A and B), **Mode C** serves two-digit plus
+one-digit addition problems. Roughly half of these are generated with a carry so
+students can practice bridging through the tens place.
