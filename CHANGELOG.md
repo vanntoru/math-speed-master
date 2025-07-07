@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.6.0] - 2025-07-11
+- Documented mode D and updated spec to version 2.9.
+- Added carry/no-carry distribution details in README.
+
 ## [v0.5.0] - 2025-07-10
 - Added HistoryWindow with matplotlib graph and session list.
 - Added pandas and matplotlib as dependencies.
