@@ -80,3 +80,19 @@ def test_finish_appends_without_header(tmp_path, monkeypatch):
     assert len(rows) == 2
     assert rows[1][2] == "B"
     assert rows[1][3] == "0.15"
+
+
+def test_finish_uses_mode_d_threshold(tmp_path, monkeypatch):
+    csv_path = tmp_path / "log.csv"
+    monkeypatch.setattr(gui, "REFLEX_LOG", str(csv_path))
+
+    captured = {}
+
+    def capture_slow(slow):
+        captured["slow"] = slow
+
+    app = create_dummy_app("D", [("1", 1.6), ("2", 1.4), ("3", 1.5)])
+    app.show_slow_dialog = capture_slow
+    app.finish()
+
+    assert captured["slow"] == [("1", 1.6)]

@@ -93,12 +93,14 @@ def test_add2digit2digitdrill_queue_properties():
 
     assert len(q) == 20
     assert len(set(q)) == 20
+    assert len({tuple(sorted(p)) for p in q}) == 20
 
     assert all(10 <= a <= 99 and 10 <= b <= 99 for a, b in q)
     assert all(not (a % 10 == 0 and b % 10 == 0) for a, b in q)
 
     carry = sum(1 for a, b in q if a % 10 + b % 10 >= 10)
     assert carry == 10
+    assert sum(1 for a, b in q if a % 10 + b % 10 < 10) == 10
 
 
 def test_add2digit2digitdrill_disp():
