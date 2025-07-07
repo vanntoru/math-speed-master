@@ -40,3 +40,38 @@ class TenMinusDrill(BaseDrill):
 
     def spk(self, v):
         pass
+
+
+class Add2Digit1DigitDrill(BaseDrill):
+    """Two-digit plus one-digit addition drill."""
+
+    def regen(self):
+        addends = _VALUES * 2 + random.sample(_VALUES, 2)
+        tens = _VALUES * 2 + random.sample(_VALUES, 2)
+        random.shuffle(addends)
+        random.shuffle(tens)
+
+        carry_indices = set(random.sample(range(20), 10))
+        q = []
+        for i in range(20):
+            a = addends[i]
+            t = tens[i]
+            if i in carry_indices:
+                ones = random.randint(10 - a, 9)
+            else:
+                ones = random.randint(0, 9 - a)
+            q.append((t * 10 + ones, a))
+
+        random.shuffle(q)
+        for i in range(len(q) - 1):
+            if q[i] == q[i + 1]:
+                swap = (i + 2) % len(q)
+                q[i + 1], q[swap] = q[swap], q[i + 1]
+        self.q = q
+
+    def disp(self, v):
+        left, right = v
+        return f"{left}+{right}"
+
+    def spk(self, v):
+        pass
