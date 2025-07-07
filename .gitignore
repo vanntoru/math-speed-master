@@ -144,3 +144,5 @@ dmypy.json
 # pytype static type analyzer
 .pytype/
 
+# セッション記録CSVを無視
+reflex_log.csv
