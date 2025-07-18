@@ -121,3 +121,13 @@ def test_random_number_drill_unique_within_range():
     assert len(q) == 20
     assert len(set(q)) == 20
     assert all(0 <= n <= 30 for n in q)
+
+
+def test_random_number_drill_excludes_zero_when_requested():
+    random.seed(0)
+    d = RandomNumberDrill(30, include_zero=False)
+    q = d.q
+
+    assert len(q) == 20
+    assert len(set(q)) == 20
+    assert all(1 <= n <= 30 for n in q)

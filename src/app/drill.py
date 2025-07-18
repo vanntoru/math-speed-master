@@ -137,16 +137,19 @@ class Add2Digit2DigitDrill(BaseDrill):
 
 
 class RandomNumberDrill(BaseDrill):
-    """Drill serving random integers from 0..max_value."""
+    """Drill serving random integers from a configurable range."""
 
-    def __init__(self, max_value: int):
-        if max_value + 1 < 20:
+    def __init__(self, max_value: int, include_zero: bool = True):
+        self.include_zero = include_zero
+        min_value = 0 if include_zero else 1
+        if max_value - min_value + 1 < 20:
             raise ValueError("max_value too small for 20 unique numbers")
         self.max_value = max_value
+        self.min_value = min_value
         super().__init__()
 
     def regen(self):
-        q = random.sample(range(self.max_value + 1), 20)
+        q = random.sample(range(self.min_value, self.max_value + 1), 20)
         random.shuffle(q)
         for i in range(len(q) - 1):
             if q[i] == q[i + 1]:
