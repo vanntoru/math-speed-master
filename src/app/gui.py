@@ -305,6 +305,7 @@ class App(tk.Tk):
             ).pack(padx=20, pady=20)
 
         tk.Button(win, text="OK", command=win.destroy).pack(pady=10)
+        win.bind("<Return>", lambda _: win.destroy())
         win.transient(self)
         win.grab_set()
         self.wait_window(win)
