@@ -53,6 +53,7 @@ _CARD_BG, _CARD_FG = "#222222", "#FFFFFF"
 _NUM_Q = 20
 _THRESH = {"A": 0.8, "B": 0.8, "C": 0.8, "D": 1.5, "E": 0.8}
 _KPI = {"A": 0.8, "B": 0.8, "C": 0.8, "D": 1.5, "E": 0.8}
+_MODE_E_INCLUDE_ZERO = True
 REFLEX_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reflex_log.csv")
 
 
@@ -205,7 +206,7 @@ class App(tk.Tk):
             return
         self.random_max = val
         if self.mode.get() == "E":
-            self.drill = RandomNumberDrill(self.random_max)
+            self.drill = RandomNumberDrill(self.random_max, include_zero=_MODE_E_INCLUDE_ZERO)
             self.lbl.config(text="Enter\nで開始", font=_FONT_MSG)
 
     # bindings
@@ -243,7 +244,7 @@ class App(tk.Tk):
             self.e_frame.pack_forget()
         else:
             self.e_frame.pack(pady=5)
-            self.drill = RandomNumberDrill(self.random_max)
+            self.drill = RandomNumberDrill(self.random_max, include_zero=_MODE_E_INCLUDE_ZERO)
 
         self.lbl.config(text="Enter\nで開始", font=_FONT_MSG)
 

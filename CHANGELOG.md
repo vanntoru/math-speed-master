@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [v0.7.0] - 2025-07-12
 - Added mode E with user-defined random numbers.
+- Mode E can now exclude zero via the `_MODE_E_INCLUDE_ZERO` constant.
 - Updated documentation and spec to version 2.10.
 
 ## [v0.6.0] - 2025-07-11
