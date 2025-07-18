@@ -134,3 +134,28 @@ class Add2Digit2DigitDrill(BaseDrill):
 
     def spk(self, v):
         pass
+
+
+class RandomNumberDrill(BaseDrill):
+    """Drill serving random integers from 0..max_value."""
+
+    def __init__(self, max_value: int):
+        if max_value + 1 < 20:
+            raise ValueError("max_value too small for 20 unique numbers")
+        self.max_value = max_value
+        super().__init__()
+
+    def regen(self):
+        q = random.sample(range(self.max_value + 1), 20)
+        random.shuffle(q)
+        for i in range(len(q) - 1):
+            if q[i] == q[i + 1]:
+                swap = (i + 2) % len(q)
+                q[i + 1], q[swap] = q[swap], q[i + 1]
+        self.q = q
+
+    def disp(self, v):
+        return str(v)
+
+    def spk(self, v):
+        pass

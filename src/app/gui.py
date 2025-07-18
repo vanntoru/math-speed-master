@@ -32,6 +32,7 @@ if __package__ is None:
         TenMinusDrill,
         Add2Digit1DigitDrill,
         Add2Digit2DigitDrill,
+        RandomNumberDrill,
     )
 else:
     from .drill import (
@@ -39,6 +40,7 @@ else:
         TenMinusDrill,
         Add2Digit1DigitDrill,
         Add2Digit2DigitDrill,
+        RandomNumberDrill,
     )
 
 # ──────────────────────────────
@@ -49,8 +51,8 @@ _FONT_MSG = ("Yu Gothic", 60, "bold")  # 開始・終了メッセージ
 _FONT_DLG = ("Consolas", 48)  # 遅延リスト
 _CARD_BG, _CARD_FG = "#222222", "#FFFFFF"
 _NUM_Q = 20
-_THRESH = {"A": 0.8, "B": 0.8, "C": 0.8, "D": 1.5}
-_KPI = {"A": 0.8, "B": 0.8, "C": 0.8, "D": 1.5}
+_THRESH = {"A": 0.8, "B": 0.8, "C": 0.8, "D": 1.5, "E": 0.8}
+_KPI = {"A": 0.8, "B": 0.8, "C": 0.8, "D": 1.5, "E": 0.8}
 REFLEX_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reflex_log.csv")
 
 
@@ -89,6 +91,7 @@ class App(tk.Tk):
 
         self.mode = tk.StringVar(value="A")
         self.drill = ComplementDrill()
+        self.random_max = 99
 
         self.records = []
         self.session = False
@@ -144,6 +147,19 @@ class App(tk.Tk):
             value="D",
             command=self.set_mode,
         ).pack(anchor=tk.W)
+        tk.Radiobutton(
+            lf,
+            text="E: 任意数字",
+            variable=self.mode,
+            value="E",
+            command=self.set_mode,
+        ).pack(anchor=tk.W)
+
+        self.e_var = tk.StringVar(value="99")
+        self.e_frame = tk.Frame(side)
+        tk.Entry(self.e_frame, width=6, textvariable=self.e_var).pack(side=tk.LEFT)
+        tk.Button(self.e_frame, text="設定", command=self.apply_e_setting).pack(side=tk.LEFT)
+        self.e_frame.pack_forget()
 
         tk.Label(side, text="履歴", font=("Yu Gothic", 12, "bold")).pack()
         self.tree = ttk.Treeview(side, columns=("#", "RT"), show="headings", height=9)
@@ -178,6 +194,20 @@ class App(tk.Tk):
         ).pack(pady=(0, 8))
         tk.Label(side, text="Enter▶回答＆開始  Esc▶Reset", font=("Yu Gothic", 8)).pack()
 
+    def apply_e_setting(self):
+        try:
+            val = int(self.e_var.get())
+        except ValueError:
+            tk.messagebox.showwarning("入力エラー", "数値を入力してください")
+            return
+        if val + 1 < _NUM_Q:
+            tk.messagebox.showwarning("入力エラー", "値が小さすぎます")
+            return
+        self.random_max = val
+        if self.mode.get() == "E":
+            self.drill = RandomNumberDrill(self.random_max)
+            self.lbl.config(text="Enter\nで開始", font=_FONT_MSG)
+
     # bindings
     def bind_all(self):
         self.bind("<Return>", self.enter)
@@ -193,18 +223,27 @@ class App(tk.Tk):
                 self.mode.set("B")
             elif isinstance(self.drill, Add2Digit1DigitDrill):
                 self.mode.set("C")
-            else:
+            elif isinstance(self.drill, Add2Digit2DigitDrill):
                 self.mode.set("D")
+            else:
+                self.mode.set("E")
             return
 
         if self.mode.get() == "A":
             self.drill = ComplementDrill()
+            self.e_frame.pack_forget()
         elif self.mode.get() == "B":
             self.drill = TenMinusDrill()
+            self.e_frame.pack_forget()
         elif self.mode.get() == "C":
             self.drill = Add2Digit1DigitDrill()
-        else:
+            self.e_frame.pack_forget()
+        elif self.mode.get() == "D":
             self.drill = Add2Digit2DigitDrill()
+            self.e_frame.pack_forget()
+        else:
+            self.e_frame.pack(pady=5)
+            self.drill = RandomNumberDrill(self.random_max)
 
         self.lbl.config(text="Enter\nで開始", font=_FONT_MSG)
 
@@ -339,6 +378,7 @@ class HistoryWindow(tk.Toplevel):
             ("モードBのみ", "B"),
             ("モードCのみ", "C"),
             ("モードDのみ", "D"),
+            ("モードEのみ", "E"),
         ]:
             tk.Radiobutton(
                 opt_frame,

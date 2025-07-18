@@ -4,7 +4,12 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from app.drill import BaseDrill, Add2Digit1DigitDrill, Add2Digit2DigitDrill
+from app.drill import (
+    BaseDrill,
+    Add2Digit1DigitDrill,
+    Add2Digit2DigitDrill,
+    RandomNumberDrill,
+)
 
 
 def test_base_drill_regen_counts():
@@ -106,3 +111,13 @@ def test_add2digit2digitdrill_queue_properties():
 def test_add2digit2digitdrill_disp():
     d = Add2Digit2DigitDrill()
     assert d.disp((12, 34)) == "12+34"
+
+
+def test_random_number_drill_unique_within_range():
+    random.seed(0)
+    d = RandomNumberDrill(30)
+    q = d.q
+
+    assert len(q) == 20
+    assert len(set(q)) == 20
+    assert all(0 <= n <= 30 for n in q)
