@@ -35,6 +35,8 @@ practice bridging through the tens place.
 drawn from 10–99 and pairs where both numbers end in zero are skipped. The 20
 problems always contain an even split of carry and non-carry cases, providing
 practice with and without regrouping.
+**Mode E** selects 20 unique integers from a user defined 0–N range. The upper
+bound can be set in the side panel when choosing mode E.
 
 ### Session History & CSV Logging
 

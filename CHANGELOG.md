@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.7.0] - 2025-07-12
+- Added mode E with user-defined random numbers.
+- Updated documentation and spec to version 2.10.
+
 ## [v0.6.0] - 2025-07-11
 - Documented mode D and updated spec to version 2.9.
 - Added carry/no-carry distribution details in README.

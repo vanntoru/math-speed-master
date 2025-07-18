@@ -96,3 +96,19 @@ def test_finish_uses_mode_d_threshold(tmp_path, monkeypatch):
     app.finish()
 
     assert captured["slow"] == [("1", 1.6)]
+
+
+def test_finish_uses_mode_e_threshold(tmp_path, monkeypatch):
+    csv_path = tmp_path / "log.csv"
+    monkeypatch.setattr(gui, "REFLEX_LOG", str(csv_path))
+
+    captured = {}
+
+    def capture_slow(slow):
+        captured["slow"] = slow
+
+    app = create_dummy_app("E", [("1", 0.9), ("2", 0.7), ("3", 0.8)])
+    app.show_slow_dialog = capture_slow
+    app.finish()
+
+    assert captured["slow"] == [("1", 0.9)]
