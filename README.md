@@ -36,8 +36,8 @@ drawn from 10–99 and pairs where both numbers end in zero are skipped. The 20
 problems always contain an even split of carry and non-carry cases, providing
 practice with and without regrouping.
 **Mode E** selects 20 unique integers from a user defined range. By default the
-numbers are drawn from 0–N but this can be changed by setting the
-`_MODE_E_INCLUDE_ZERO` constant in `gui.py`.
+numbers are drawn from 1–N but this can be changed by setting the
+`_MODE_E_INCLUDE_ZERO` constant in `gui.py` to `True`.
 The upper bound can be set in the side panel when choosing mode E.
 
 ### Session History & CSV Logging

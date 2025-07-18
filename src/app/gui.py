@@ -53,7 +53,7 @@ _CARD_BG, _CARD_FG = "#222222", "#FFFFFF"
 _NUM_Q = 20
 _THRESH = {"A": 0.8, "B": 0.8, "C": 0.8, "D": 1.5, "E": 0.8}
 _KPI = {"A": 0.8, "B": 0.8, "C": 0.8, "D": 1.5, "E": 0.8}
-_MODE_E_INCLUDE_ZERO = True
+_MODE_E_INCLUDE_ZERO = False
 REFLEX_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reflex_log.csv")
 
 
