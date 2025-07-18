@@ -96,6 +96,7 @@ class App(tk.Tk):
 
         self.records = []
         self.session = False
+        self.slow_win = None
 
         self.build()
         self.bind_all()
@@ -159,7 +160,9 @@ class App(tk.Tk):
         self.e_var = tk.StringVar(value="99")
         self.e_frame = tk.Frame(side)
         tk.Entry(self.e_frame, width=6, textvariable=self.e_var).pack(side=tk.LEFT)
-        tk.Button(self.e_frame, text="設定", command=self.apply_e_setting).pack(side=tk.LEFT)
+        tk.Button(self.e_frame, text="設定", command=self.apply_e_setting).pack(
+            side=tk.LEFT
+        )
         self.e_frame.pack_forget()
 
         tk.Label(side, text="履歴", font=("Yu Gothic", 12, "bold")).pack()
@@ -206,7 +209,9 @@ class App(tk.Tk):
             return
         self.random_max = val
         if self.mode.get() == "E":
-            self.drill = RandomNumberDrill(self.random_max, include_zero=_MODE_E_INCLUDE_ZERO)
+            self.drill = RandomNumberDrill(
+                self.random_max, include_zero=_MODE_E_INCLUDE_ZERO
+            )
             self.lbl.config(text="Enter\nで開始", font=_FONT_MSG)
 
     # bindings
@@ -244,7 +249,9 @@ class App(tk.Tk):
             self.e_frame.pack_forget()
         else:
             self.e_frame.pack(pady=5)
-            self.drill = RandomNumberDrill(self.random_max, include_zero=_MODE_E_INCLUDE_ZERO)
+            self.drill = RandomNumberDrill(
+                self.random_max, include_zero=_MODE_E_INCLUDE_ZERO
+            )
 
         self.lbl.config(text="Enter\nで開始", font=_FONT_MSG)
 
@@ -273,14 +280,13 @@ class App(tk.Tk):
         self.stat_lbl.config(
             bg="#66CC66" if avg <= _KPI[self.mode.get()] else "#CCCCCC"
         )
-        slow = [
-            (d, rt) for d, rt in self.records if rt > _THRESH[self.mode.get()]
-        ]
+        slow = [(d, rt) for d, rt in self.records if rt > _THRESH[self.mode.get()]]
         self.show_slow_dialog(slow)
 
     # custom dialog
     def show_slow_dialog(self, slow):
         win = tk.Toplevel(self)
+        self.slow_win = win
         thr = _THRESH[self.mode.get()]
         win.title(f"{thr} 秒より遅かった問題")
         win.configure(bg=_CARD_BG)
@@ -304,11 +310,17 @@ class App(tk.Tk):
                 bg=_CARD_BG,
             ).pack(padx=20, pady=20)
 
-        tk.Button(win, text="OK", command=win.destroy).pack(pady=10)
-        win.bind("<Return>", lambda _: win.destroy())
+        tk.Button(win, text="OK", command=self.close_slow_dialog).pack(pady=10)
+        win.bind("<Return>", lambda _: self.close_slow_dialog())
         win.transient(self)
         win.grab_set()
+        win.protocol("WM_DELETE_WINDOW", self.close_slow_dialog)
         self.wait_window(win)
+
+    def close_slow_dialog(self):
+        if self.slow_win is not None:
+            self.slow_win.destroy()
+            self.slow_win = None
 
     def show_history(self):
         if pd is None or plt is None:
@@ -320,6 +332,8 @@ class App(tk.Tk):
         HistoryWindow(self)
 
     def reset(self):
+        if self.slow_win is not None:
+            self.close_slow_dialog()
         self.session = False
         self.records = []
         self.clear_tree()
@@ -334,6 +348,10 @@ class App(tk.Tk):
 
     # key
     def enter(self, _):
+        if self.slow_win is not None:
+            self.close_slow_dialog()
+            return
+
         if not self.session:
             self.start()
             return
